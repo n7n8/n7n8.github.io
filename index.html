@@ -1,10 +1,263 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>我的个人主页</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基础深色模式支持</title>
+  <style>
+    /* 基础样式：默认使用浅色主题（当系统偏好不明确或未支持时） */
+    :root {
+      color-scheme: light dark; /* 告诉浏览器此页面同时支持浅色和深色 */
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --card-bg: #f5f5f5;
+      --border: #cccccc;
+      --accent: #0066cc;
+      --button-bg: #e0e0e0;
+      --button-text: #1a1a1a;
+    }
+
+    /* 深色主题变量：当系统偏好为深色时自动应用 */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --text: #e0e0e0;
+        --card-bg: #1e1e1e;
+        --border: #333333;
+        --accent: #6699ff;
+        --button-bg: #2c2c2c;
+        --button-text: #e0e0e0;
+      }
+    }
+
+    /* 可选：如果希望用户手动切换时覆盖系统偏好，可使用 class 策略（这里加一个简单的按钮演示手动切换） */
+    /* 手动切换类：.light-mode 和 .dark-mode 可以覆盖系统设置 */
+    body.light-mode {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --card-bg: #f5f5f5;
+      --border: #cccccc;
+      --accent: #0066cc;
+      --button-bg: #e0e0e0;
+      --button-text: #1a1a1a;
+    }
+
+    body.dark-mode {
+      --bg: #121212;
+      --text: #e0e0e0;
+      --card-bg: #1e1e1e;
+      --border: #333333;
+      --accent: #6699ff;
+      --button-bg: #2c2c2c;
+      --button-text: #e0e0e0;
+    }
+
+    /* 基础重置与字体 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .accent-text {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    button {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      font-family: inherit;
+    }
+
+    button:hover {
+      background-color: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .theme-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .theme-toggle button {
+      flex: 0 0 auto;
+    }
+
+    /* 简单的响应式 */
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+
+    /* 演示：清晰地区分当前主题 */
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      background-color: var(--border);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
+    }
+  </style>
 </head>
 <body>
-    <h1>欢迎来到我的 GitHub Page！</h1>
-    <p>这是我的第一个静态网页。</p>
+  <div class="container">
+    <div class="theme-toggle">
+      <button id="theme-auto" title="跟随系统">跟随系统</button>
+      <button id="theme-light" title="浅色模式">浅色</button>
+      <button id="theme-dark" title="深色模式">深色</button>
+    </div>
+
+    <h1>基础深色模式支持</h1>
+    
+    <p>这个页面自动响应系统的深色/浅色偏好（通过 <code>prefers-color-scheme</code>）。你也可以使用上方的按钮手动切换。</p>
+    
+    <div class="card">
+      <h2>👋 你好，世界！</h2>
+      <p>这是一个 <span class="accent-text">强调文本</span> 示例。所有颜色都基于 CSS 自定义属性（变量），因此主题切换非常轻松。</p>
+      <p>当前主题状态：<span class="status-badge" id="theme-status">检测中…</span></p>
+    </div>
+
+    <h2>📋 特性</h2>
+    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+      <li>使用 <code>prefers-color-scheme</code> 自动适配系统深色/浅色设置</li>
+      <li>通过 <code>color-scheme</code> 属性让浏览器原生控件也适配</li>
+      <li>所有颜色使用 CSS 变量，易于维护和扩展</li>
+      <li>平滑的过渡效果</li>
+      <li>包含手动切换按钮作为演示（实际项目可根据需求取舍）</li>
+    </ul>
+
+    <div class="card">
+      <h2>🔧 如何实现的？</h2>
+      <p>核心是以下 CSS：</p>
+      <pre style="background: var(--bg); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border); overflow-x: auto;"><code>@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --text: #e0e0e0;
+    /* ...其他变量 */
+  }
+}</code></pre>
+      <p>同时，在 <code>body</code> 上使用 <code>color-scheme: light dark</code> 让浏览器知道页面支持两种模式。</p>
+    </div>
+
+    <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 2rem;">🔍 尝试切换你的操作系统主题，或使用上方按钮查看变化。</p>
+  </div>
+
+  <script>
+    (function() {
+      // 获取元素
+      const themeStatus = document.getElementById('theme-status');
+      const body = document.body;
+      const buttons = {
+        auto: document.getElementById('theme-auto'),
+        light: document.getElementById('theme-light'),
+        dark: document.getElementById('theme-dark')
+      };
+
+      // 更新状态文字（同时显示系统偏好和当前类）
+      function updateStatus() {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemPref = prefersDark ? '深色' : '浅色';
+        
+        let currentMode = '跟随系统';
+        if (body.classList.contains('light-mode')) currentMode = '强制浅色';
+        if (body.classList.contains('dark-mode')) currentMode = '强制深色';
+        
+        themeStatus.textContent = `${currentMode} (系统偏好: ${systemPref})`;
+      }
+
+      // 移除手动类
+      function removeManualClasses() {
+        body.classList.remove('light-mode', 'dark-mode');
+      }
+
+      // 设置跟随系统
+      function setAuto() {
+        removeManualClasses();
+        updateStatus();
+      }
+
+      // 设置浅色
+      function setLight() {
+        removeManualClasses();
+        body.classList.add('light-mode');
+        updateStatus();
+      }
+
+      // 设置深色
+      function setDark() {
+        removeManualClasses();
+        body.classList.add('dark-mode');
+        updateStatus();
+      }
+
+      // 绑定按钮事件
+      buttons.auto.addEventListener('click', setAuto);
+      buttons.light.addEventListener('click', setLight);
+      buttons.dark.addEventListener('click', setDark);
+
+      // 监听系统主题变化，更新状态文字
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', updateStatus);
+
+      // 初始化状态
+      updateStatus();
+
+      // 可选：如果浏览器不支持 matchMedia，简单降级（但现代浏览器都支持）
+      // 此处无需额外处理
+    })();
+  </script>
 </body>
 </html>
